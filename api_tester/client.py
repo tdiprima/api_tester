@@ -4,17 +4,17 @@ HTTP client for API testing with decorator support.
 Combines decorators and dataclasses for a practical API testing tool.
 """
 
+import json
 import statistics
 import time
-from typing import List, Optional
-from datetime import datetime
-import urllib.request
 import urllib.error
 import urllib.parse
-import json
+import urllib.request
+from datetime import datetime
+from typing import List, Optional
 
-from .models import APIRequest, APIResponse, TestConfig, BenchmarkResult
-from .decorators import retry, rate_limit, timeit, CallCounter
+from .decorators import CallCounter, rate_limit, retry
+from .models import APIRequest, APIResponse, BenchmarkResult, TestConfig
 
 
 class APIClient:
@@ -47,8 +47,8 @@ class APIClient:
             # Prepare request
             data = None
             if request.body:
-                data = json.dumps(request.body).encode('utf-8')
-                request.headers.setdefault('Content-Type', 'application/json')
+                data = json.dumps(request.body).encode("utf-8")
+                request.headers.setdefault("Content-Type", "application/json")
 
             # Build URL with query parameters
             url = request.url
@@ -58,24 +58,23 @@ class APIClient:
 
             # Create request object
             req = urllib.request.Request(
-                url,
-                data=data,
-                headers=request.headers,
-                method=request.method
+                url, data=data, headers=request.headers, method=request.method
             )
 
             # Make request
             with urllib.request.urlopen(
                 req,
                 timeout=request.timeout,
-                context=None if self.config.verify_ssl else self._get_unverified_context()
+                context=(
+                    None if self.config.verify_ssl else self._get_unverified_context()
+                ),
             ) as response:
-                body = response.read().decode('utf-8')
+                body = response.read().decode("utf-8")
                 status_code = response.status
                 headers = dict(response.headers)
 
         except urllib.error.HTTPError as e:
-            body = e.read().decode('utf-8') if e.fp else ""
+            body = e.read().decode("utf-8") if e.fp else ""
             status_code = e.code
             headers = dict(e.headers) if e.headers else {}
             error_msg = f"HTTP {e.code}: {e.reason}"
@@ -100,13 +99,14 @@ class APIClient:
             body=body,
             elapsed_time=elapsed_time,
             timestamp=datetime.now(),
-            error=error_msg
+            error=error_msg,
         )
 
     @staticmethod
     def _get_unverified_context():
         """Create SSL context that doesn't verify certificates."""
         import ssl
+
         return ssl._create_unverified_context()
 
     def make_request(self, request: APIRequest) -> APIResponse:
@@ -125,8 +125,7 @@ class APIClient:
         # Apply retry decorator if configured
         if self.config.retry_attempts > 1:
             fn = retry(
-                attempts=self.config.retry_attempts,
-                delay=self.config.retry_delay
+                attempts=self.config.retry_attempts, delay=self.config.retry_delay
             )(fn)
 
         # Apply rate limiting if configured
@@ -175,7 +174,7 @@ class APIClient:
             max_time=max_time,
             median_time=median_time,
             total_duration=total_duration,
-            responses=responses
+            responses=responses,
         )
 
     @property

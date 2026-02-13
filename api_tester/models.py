@@ -5,13 +5,14 @@ Demonstrates: frozen dataclasses, post_init validation, default_factory, field c
 """
 
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, List
 from datetime import datetime
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
 class APIRequest:
     """Configuration for an API request."""
+
     url: str
     method: str = "GET"
     headers: Dict[str, str] = field(default_factory=dict)
@@ -22,7 +23,15 @@ class APIRequest:
     def __post_init__(self):
         """Validate request configuration."""
         self.method = self.method.upper()
-        if self.method not in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]:
+        if self.method not in [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "HEAD",
+            "OPTIONS",
+        ]:
             raise ValueError(f"Invalid HTTP method: {self.method}")
         if self.timeout <= 0:
             raise ValueError("Timeout must be positive")
@@ -33,6 +42,7 @@ class APIRequest:
 @dataclass(frozen=True)
 class APIResponse:
     """Immutable response from an API request."""
+
     status_code: int
     headers: Dict[str, str]
     body: str
@@ -54,6 +64,7 @@ class APIResponse:
 @dataclass
 class TestConfig:
     """Configuration for API testing behavior."""
+
     retry_attempts: int = 3
     retry_delay: float = 0.5
     rate_limit: Optional[float] = None  # requests per second
@@ -74,6 +85,7 @@ class TestConfig:
 @dataclass(frozen=True)
 class BenchmarkResult:
     """Immutable results from benchmarking an endpoint."""
+
     url: str
     total_requests: int
     successful_requests: int

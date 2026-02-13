@@ -4,8 +4,8 @@ Example usage of API Client Tester as a library.
 Demonstrates how to use the client programmatically in your own scripts.
 """
 
-from api_tester.models import APIRequest, TestConfig, APIResponse
 from api_tester.client import APIClient
+from api_tester.models import APIRequest, TestConfig
 
 
 def example_single_request():
@@ -14,10 +14,7 @@ def example_single_request():
     print("Example 1: Single Request")
     print("=" * 60)
 
-    request = APIRequest(
-        url="https://api.github.com/users/octocat",
-        method="GET"
-    )
+    request = APIRequest(url="https://api.github.com/users/octocat", method="GET")
 
     config = TestConfig(retry_attempts=3)
     client = APIClient(config)
@@ -36,14 +33,10 @@ def example_with_retry():
     print("=" * 60)
 
     request = APIRequest(
-        url="https://httpbin.org/status/500",  # Will fail
-        method="GET"
+        url="https://httpbin.org/status/500", method="GET"  # Will fail
     )
 
-    config = TestConfig(
-        retry_attempts=3,
-        retry_delay=0.5
-    )
+    config = TestConfig(retry_attempts=3, retry_delay=0.5)
     client = APIClient(config)
 
     try:
@@ -61,10 +54,7 @@ def example_benchmark():
     print("Example 3: Benchmark")
     print("=" * 60)
 
-    request = APIRequest(
-        url="https://httpbin.org/get",
-        method="GET"
-    )
+    request = APIRequest(url="https://httpbin.org/get", method="GET")
 
     config = TestConfig(retry_attempts=1)
     client = APIClient(config)
@@ -85,19 +75,14 @@ def example_rate_limited():
     print("Example 4: Rate Limited Requests")
     print("=" * 60)
 
-    request = APIRequest(
-        url="https://httpbin.org/get",
-        method="GET"
-    )
+    request = APIRequest(url="https://httpbin.org/get", method="GET")
 
-    config = TestConfig(
-        retry_attempts=1,
-        rate_limit=2.0  # 2 requests per second
-    )
+    config = TestConfig(retry_attempts=1, rate_limit=2.0)  # 2 requests per second
     client = APIClient(config)
 
     print("Making 5 requests at 2 req/s...")
     import time
+
     start = time.time()
 
     for i in range(5):
@@ -119,7 +104,7 @@ def example_post_request():
         url="https://httpbin.org/post",
         method="POST",
         body={"name": "example", "value": 123, "items": [1, 2, 3]},
-        headers={"X-Custom-Header": "test"}
+        headers={"X-Custom-Header": "test"},
     )
 
     client = APIClient()
@@ -139,19 +124,13 @@ def example_validation():
 
     # This will raise ValueError due to invalid method
     try:
-        request = APIRequest(
-            url="https://example.com",
-            method="INVALID"
-        )
+        request = APIRequest(url="https://example.com", method="INVALID")
     except ValueError as e:
         print(f"✓ Caught validation error: {e}")
 
     # This will raise ValueError due to invalid URL
     try:
-        request = APIRequest(
-            url="not-a-valid-url",
-            method="GET"
-        )
+        request = APIRequest(url="not-a-valid-url", method="GET")
     except ValueError as e:
         print(f"✓ Caught validation error: {e}")
 

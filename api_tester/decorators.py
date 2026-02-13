@@ -6,7 +6,7 @@ Reuses patterns from the decorator examples: retry, rate limiting, timing, loggi
 
 import time
 from functools import wraps
-from typing import Callable, Any
+from typing import Any, Callable
 
 
 def retry(attempts: int = 3, delay: float = 0.5, backoff: float = 2.0):
@@ -18,6 +18,7 @@ def retry(attempts: int = 3, delay: float = 0.5, backoff: float = 2.0):
         delay: Initial delay between retries in seconds
         backoff: Multiplier for delay after each retry
     """
+
     def decorator(fn: Callable) -> Callable:
         @wraps(fn)
         def wrapper(*args, **kwargs) -> Any:
@@ -36,6 +37,7 @@ def retry(attempts: int = 3, delay: float = 0.5, backoff: float = 2.0):
             raise last_exception
 
         return wrapper
+
     return decorator
 
 
@@ -60,6 +62,7 @@ def rate_limit(requests_per_second: float):
             return fn(*args, **kwargs)
 
         return wrapper
+
     return decorator
 
 
@@ -68,6 +71,7 @@ def timeit(fn: Callable) -> Callable:
     Timing decorator that measures function execution time.
     Returns tuple of (result, elapsed_time).
     """
+
     @wraps(fn)
     def wrapper(*args, **kwargs) -> tuple[Any, float]:
         start = time.perf_counter()
@@ -85,11 +89,14 @@ def log_request(verbose: bool = False):
     Args:
         verbose: If True, log detailed request/response info
     """
+
     def decorator(fn: Callable) -> Callable:
         @wraps(fn)
         def wrapper(*args, **kwargs) -> Any:
             if verbose:
-                print(f"[REQUEST] {fn.__name__} called with args={args}, kwargs={kwargs}")
+                print(
+                    f"[REQUEST] {fn.__name__} called with args={args}, kwargs={kwargs}"
+                )
 
             try:
                 result = fn(*args, **kwargs)
@@ -102,6 +109,7 @@ def log_request(verbose: bool = False):
                 raise
 
         return wrapper
+
     return decorator
 
 
@@ -110,6 +118,7 @@ class CallCounter:
     Class-based decorator to count function calls.
     Demonstrates class-based decorator pattern.
     """
+
     def __init__(self, fn: Callable):
         self.fn = fn
         self.count = 0
