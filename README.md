@@ -31,57 +31,59 @@ A practical CLI tool for testing and benchmarking HTTP APIs. Built to showcase P
 ## Usage
 
 ```bash
+pip install -e .
+
 # Simple GET request
-python -m api_tester https://api.github.com/users/octocat
+api_tester https://api.github.com/users/octocat
 
 # Verbose output
-python -m api_tester https://httpbin.org/get --verbose
+api_tester https://httpbin.org/get --verbose
 
 # POST request with JSON body
-python -m api_tester https://httpbin.org/post -X POST -d '{"name":"test"}'
+api_tester https://httpbin.org/post -X POST -d '{"name":"test"}'
 
 # With custom headers
-python -m api_tester https://api.example.com -H "Authorization: Bearer token"
+api_tester https://api.example.com -H "Authorization: Bearer token"
 
 # Benchmark mode (100 requests)
-python -m api_tester https://api.example.com --benchmark 100
+api_tester https://api.example.com --benchmark 100
 
 # With retry and rate limiting
-python -m api_tester https://flaky-api.com --retry 5 --rate-limit 10
+api_tester https://flaky-api.com --retry 5 --rate-limit 10
 
 # JSON output for scripting
-python -m api_tester https://api.example.com --json
+api_tester https://api.example.com --json
 
 # Disable SSL verification (use with caution!)
-python -m api_tester https://self-signed.badssl.com --no-verify-ssl
+api_tester https://self-signed.badssl.com --no-verify-ssl
 ```
 
 ## Command Line Options
 
 ```sh
-python -m api_tester --help
+api_tester --help
 ```
 
 ## Examples
 
 ### Test a public API
 ```bash
-python -m api_tester https://api.github.com/users/octocat
+api_tester https://api.github.com/users/octocat
 ```
 
 ### Benchmark an endpoint
 ```bash
-python -m api_tester https://httpbin.org/delay/1 --benchmark 10
+api_tester https://httpbin.org/delay/1 --benchmark 10
 ```
 
 ### Test with retry on flaky endpoint
 ```bash
-python -m api_tester https://httpbin.org/status/500 --retry 5
+api_tester https://httpbin.org/status/500 --retry 5
 ```
 
 ### Rate-limited requests
 ```bash
-python -m api_tester https://api.example.com --rate-limit 5 --benchmark 20
+api_tester https://api.example.com --rate-limit 5 --benchmark 20
 ```
 
 ## License
